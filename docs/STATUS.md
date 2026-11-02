@@ -6,6 +6,15 @@ workspace clippy, layers, fmt and the secret scan of all history were clean. Chi
 
 ## What works, and how it was checked
 
+Project Goal mode (R2.11) is available on an existing project: versioned objective/constraints,
+ordered milestones with typed check or evidence requirements, cycle/time/reported-token budgets,
+pause/resume and retained checkpoints. All four lifecycle tools work headlessly; `goal <folder>`
+keeps a CLI worker attached, and the desktop reads progress off the UI thread. Fresh checks
+revalidate earlier milestones and cannot skip an unattempted one. A project lease prevents
+concurrent builders; an independent engine session keeps control responsive. See
+[goal-mode.md](goal-mode.md) for usage and acceptance limits. This version does not keep working
+after its host exits and does not claim that build success proves behavioural fidelity.
+
 | Area | State | Verified by |
 |---|---|---|
 | Mach-O Objective-C pointers | Chained offsets mapped only into file-empty `__PAGEZERO` reach the image-base fallback; pointer candidates must be backed by file bytes | Synthetic thin and fat Mach-O regression, plain-pointer and authenticated-rebase controls, null and unmapped-pointer checks. Real binaries were not checked for this correction |

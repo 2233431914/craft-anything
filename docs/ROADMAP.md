@@ -904,6 +904,7 @@ turns and restarts. A usable build and a completed goal are separate states.
 - [ ] Versioned goal records, check-driven milestones, resource limits and resumable checkpoints;
       one writer per project, lifecycle tools, CLI execution and project controls
       — claimed: Codex, branch feature/r2.11-project-goals
+- [ ] Cross-process goal queuing with durable reservations (V1 requires a free build slot)
 - [ ] Background service execution after the desktop app exits
 - [ ] Independent behavioural evaluators beyond the existing project and plugin checks
 
