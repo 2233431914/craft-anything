@@ -708,6 +708,9 @@ Deep mode is its own switch, not tied to Ghidra.
 ### R2.9 Everyday use: typing, projects, settings
 Owner: maintainers · Status: in progress
 Gaps found while using the app for real projects.
+- [ ] Keep builds and analysis responsive: cull offscreen messages, finish stale streaming indicators,
+      bound UI event batches, avoid copying large results, and animate smoothly while focused
+      — claimed: Codex, branch bugfix/r2.9-ui-responsiveness
 - [x] Up at the start of the prompt box takes back the last note still waiting for the builder,
       to edit it (as the x beside it does)
 - [x] With nothing waiting, Up and Down in the prompt box cycle through previous prompts, as in a
