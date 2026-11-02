@@ -691,7 +691,7 @@ impl Worker {
         if first && ws.app_dir().join(ORIGINALS_MANIFEST).is_file() {
             prompt.push_str(ORIGINALS_READY);
         }
-        let mut round = ws.manifest.checks.iter().map(|c| c.round).max().unwrap_or(0);
+        let mut round = ws.manifest.checks.iter().map(|c| c.round).max().unwrap_or(0).max(self.goal.as_ref().map_or(0, |g| g.last_round()));
         let mut refinements = 0;
         // Deep mode on a program: decompiling is required, so a build turn without any gets one reminder.
         let must_decompile = !self.engine.session().clean_room() && matches!(ws.manifest.target, TargetRef::Local { .. });

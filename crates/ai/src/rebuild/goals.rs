@@ -11,6 +11,7 @@ pub(super) struct GoalRuntime {
     cancel: CancelToken,
     watcher: Option<std::thread::JoinHandle<()>>,
     unknowns: BTreeSet<String>,
+    last_round: u32,
 }
 
 impl GoalRuntime {
@@ -37,6 +38,7 @@ impl GoalRuntime {
             cancel,
             watcher: None,
             unknowns,
+            last_round: g.checkpoints.last().map_or(0, |c| c.round),
         };
         let (root, since, baseline, watching, stop) =
             (runtime.root.clone(), runtime.since, runtime.baseline_ms, runtime.watching.clone(), runtime.cancel.clone());
@@ -96,8 +98,14 @@ impl GoalRuntime {
     }
 
     pub(super) fn verify(&self, ws: &Workspace, round: u32, checks: &[CheckResult]) -> Result<Goal, ToolError> {
+        if round == 0 || checks.iter().any(|c| c.round != round) {
+            return Err(ToolError::invalid("A check returned results for a different round. Fix the check before resuming the goal."));
+        }
         let resolved = resolved_unknowns(ws, &self.unknowns, &self.cancel)?;
         goal::update(&self.root, |g| {
+            if g.checkpoints.last().is_some_and(|c| c.round >= round) {
+                return Err(ToolError::invalid("The verification round did not advance beyond the saved goal checkpoint."));
+            }
             account_time(g, self.since, self.baseline_ms, 0);
             if g.awaiting_check {
                 g.verify(round, checks, &resolved);
@@ -106,6 +114,10 @@ impl GoalRuntime {
             }
             Ok(())
         })
+    }
+
+    pub(super) fn last_round(&self) -> u32 {
+        self.last_round
     }
 
     pub(super) fn built(&self) -> Result<(), ToolError> {
@@ -256,13 +268,15 @@ mod tests {
             .unwrap();
         goal::update(&ws.root, Goal::activate).unwrap();
         let first = GoalRuntime::start(&ws.root, CancelToken::default()).unwrap();
+        first.verify(&ws, 9, &[CheckResult::new("build", 9, true, "Baseline before work")]).unwrap();
         first.built().unwrap();
         first.finish(false, "Host closed after the turn");
         drop(first);
         assert!(goal::load(&ws.root).unwrap().unwrap().awaiting_check);
         goal::update(&ws.root, Goal::activate).unwrap();
         let resumed = GoalRuntime::start(&ws.root, CancelToken::default()).unwrap();
-        let g = resumed.verify(&ws, 1, &[CheckResult::new("build", 1, true, "Fresh build check")]).unwrap();
+        assert_eq!(resumed.last_round(), 9, "a restored older craft.json must not reuse a goal's check round");
+        let g = resumed.verify(&ws, 10, &[CheckResult::new("build", 10, true, "Fresh build check")]).unwrap();
         assert_eq!(g.status, GoalStatus::Complete);
         assert_eq!(g.cycles, 1);
         assert!(!g.awaiting_check);

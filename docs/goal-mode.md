@@ -104,3 +104,13 @@ are printed with their ids and can be answered from the app or `project-inbox-an
 terminal. It never blocks control on stdin. Exit codes: 0 completed, 1 blocked/budget/error,
 130 interrupted. A one-shot `project-goal-resume` CLI invocation cannot outlive its process;
 use `goal` for terminal execution, or the lifecycle tools in a persistent MCP host.
+
+## Verification
+
+Synthetic worker tests cover fresh baselines, two successive milestones beyond the ordinary
+round limit, missing requirements, stalled progress, cycle/time/token limits, evidence integrity,
+pause precedence, restored check rounds and finished turns, and invalidation by ordinary follow-ups.
+A CLI subprocess test runs a synthetic builder/compiler, refuses a second writer, pauses from
+another client, and resumes to completion. UI tests save and reopen a goal and pause an interrupted
+one; the existing 70 UI smoke tests pass. Live AI quality, a real target's fidelity and uninterrupted
+multi-day operation have not been claimed from these tests.

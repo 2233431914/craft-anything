@@ -901,7 +901,7 @@ to the project next. Pins are the engine's (tools), kept in the project's `pinne
 Owner: maintainers · Status: in progress
 Keep a project's objective, milestones, acceptance checks and budgets across bounded rebuild
 turns and restarts. A usable build and a completed goal are separate states.
-- [ ] Versioned goal records, check-driven milestones, resource limits and resumable checkpoints;
+- [x] Versioned goal records, check-driven milestones, resource limits and resumable checkpoints;
       one writer per project, lifecycle tools, CLI execution and project controls
       — claimed: Codex, branch feature/r2.11-project-goals
 - [ ] Cross-process goal queuing with durable reservations (V1 requires a free build slot)

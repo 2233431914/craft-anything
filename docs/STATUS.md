@@ -14,6 +14,12 @@ revalidate earlier milestones and cannot skip an unattempted one. A project leas
 concurrent builders; an independent engine session keeps control responsive. See
 [goal-mode.md](goal-mode.md) for usage and acceptance limits. This version does not keep working
 after its host exits and does not claim that build success proves behavioural fidelity.
+Validation on macOS with Rust 1.98.1: 763 tests passed across engine/AI/UI/CLI, including the
+cross-process pause/resume test with synthetic programs; 5 were ignored. The two pre-existing
+macOS fixture failures remain (`auto_mode_keeps_going_but_never_does_the_dangerous_things`,
+temporary-path aliases; `real_binary_end_to_end_if_present`, assumes a Linux `/bin/ls`).
+The two optional WASM plugin tests also passed, including worker-session inheritance.
+No paid AI service or live reconstruction target was used for Goal verification.
 
 | Area | State | Verified by |
 |---|---|---|
